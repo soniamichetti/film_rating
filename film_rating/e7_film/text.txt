@@ -1,0 +1,101 @@
+https://dbdiagram.io/d/67d9fdbd75d75cc84497ca37
+
+https://lucid.app/lucidchart/2c4d37dd-85d9-4754-927d-6d2cba6769e1/edit?beaconFlowId=E0DA2CEBD9C631E0&invitationId=inv_01c24749-85a0-4843-86a0-2663ff5d78c4&page=0_0#
+
+
+
+
+mcd :
+Table utilisateurs {
+  id int [pk, increment]
+  nom varchar(50) [not null]
+  prenom varchar(50) [not null]
+  email varchar(100) [not null, unique]
+  mot_de_passe varchar(255) [not null]
+  date_inscription datetime [default: `CURRENT_TIMESTAMP`]
+  role enum('utilisateur', 'administrateur') [default: 'utilisateur']
+}
+
+Table realisateurs {
+  id int [pk, increment]
+  nom varchar(50) [not null]
+  prenom varchar(50) [not null]
+  date_naissance date
+  biographie text
+}
+
+Table films {
+  id int [pk, increment]
+  titre varchar(100) [not null]
+  annee int [not null]
+  synopsis text
+  affiche varchar(255)
+  duree int [note: 'Durée en minutes']
+  realisateur_id int [not null, ref: > realisateurs.id]
+  date_ajout datetime [default: `CURRENT_TIMESTAMP`]
+}
+
+Table genres {
+  id int [pk, increment]
+  libelle varchar(50) [not null, unique]
+}
+
+Table film_genre {
+  film_id int [not null, ref: > films.id]
+  genre_id int [not null, ref: > genres.id]
+  
+  indexes {
+    (film_id, genre_id) [pk]
+  }
+}
+
+Table notations {
+  id int [pk, increment]
+  utilisateur_id int [not null, ref: > utilisateurs.id]
+  film_id int [not null, ref: > films.id]
+  note decimal(2,1) [not null, note: 'Entre 0 et 10']
+  commentaire text
+  date_notation datetime [default: `CURRENT_TIMESTAMP`]
+  date_modification datetime [default: null]
+  
+  indexes {
+    (utilisateur_id, film_id) [unique]
+  }
+}
+
+Table notation_likes {
+  utilisateur_id int [not null, ref: > utilisateurs.id]
+  notation_id int [not null, ref: > notations.id]
+  date_like datetime [default: `CURRENT_TIMESTAMP`]
+  
+  indexes {
+    (utilisateur_id, notation_id) [pk]
+  }
+}
+
+Table acteurs {
+  id int [pk, increment]
+  nom varchar(50) [not null]
+  prenom varchar(50) [not null]
+  date_naissance date
+  biographie text
+}
+
+Table film_acteur {
+  film_id int [not null, ref: > films.id]
+  acteur_id int [not null, ref: > acteurs.id]
+  role varchar(100) [not null]
+  
+  indexes {
+    (film_id, acteur_id) [pk]
+  }
+}
+
+Table favoris {
+  utilisateur_id int [not null, ref: > utilisateurs.id]
+  film_id int [not null, ref: > films.id]
+  
+  indexes {
+    (utilisateur_id, film_id) [pk]
+  }
+}
